@@ -333,7 +333,7 @@ window.addEventListener('DOMContentLoaded', () => {
       if (typeValue && squareValue) {
         total = price * typeValue * squareValue * countValue * dayValue;
       }
-      totalValue.textContent = total;
+      return total;
     };
 
     calcBlock.addEventListener('input', event => {
@@ -348,7 +348,23 @@ window.addEventListener('DOMContentLoaded', () => {
       const target = event.target;
 
       if (target === calcType || target === calcSquare || target === calcCount || target === calcDay) {
-        countSum();
+        const total = countSum();
+
+        let index = 0;
+        const totalQuater = total / 50;
+        if (total === 0) {
+          totalValue.textContent = 0;
+        }
+        const timerTotal = setInterval(() => {
+          for (let i = 0; i < totalQuater; i++) {
+            index++;
+            totalValue.textContent = index;
+          }
+          if (totalValue.textContent >= total) {
+            clearInterval(timerTotal);
+          }
+        }, 10);
+
       }
     });
   };
@@ -365,26 +381,31 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const statusMessage = document.createElement('div');
     statusMessage.style.cssText = 'font-size: 2rem; color: yellow';
+    const circleMessage = document.createElement('img');
+    circleMessage.src = `./images/200.gif`;
 
     const formBodyArray = [...form.elements];
 
-    const postData = (body, outputData, errorData) => {
-      const request = new XMLHttpRequest();
-      request.addEventListener('readystatechange', () => {
-        if (request.readyState !== 4) {
-          return;
-        }
-        if (request.status === 200) {
-          outputData();
-        } else {
-          errorData(request.status);
-        }
+    // eslint-disable-next-line arrow-body-style
+    const postData = (body) => {
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.addEventListener('readystatechange', () => {
+          if (request.readyState !== 4) {
+            return;
+          }
+          if (request.status === 200) {
+            resolve();
+          } else {
+            reject(request.status);
+          }
+        });
+        request.open('POST', './server.php');
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.send(JSON.stringify(body));
       });
-      request.open('POST', './server.php');
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.send(JSON.stringify(body));
     };
-    
+
     formBodyArray.forEach(item => {
       if (/phone$/.test(item.id)) {
         item.addEventListener('input', () => {
@@ -392,7 +413,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
       } else if (/name$/.test(item.id) || /message$/.test(item.id)) {
         item.addEventListener('input', () => {
-          item.value = item.value.replace(/[^а-я ]/gi, '');
+          item.value = item.value.replace(/[^а-я]/gi, '');
         });
       }
     });
@@ -400,23 +421,27 @@ window.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', event => {
       event.preventDefault();
       form.append(statusMessage);
-      statusMessage.textContent = loadMessage;
+      form.append(circleMessage);
       const formData = new FormData(form);
       const body = {};
       formData.forEach((item, i) => {
         body[i] = item;
       });
-      postData(body, () => {
-        statusMessage.textContent = successMessage;
-        formBodyArray.forEach(item => {
-          if (item.tagName.toLowerCase() !== 'button') {
-            item.value = '';
-          }
+
+      postData(body)
+        .then(() => {
+          circleMessage.remove();
+          statusMessage.textContent = successMessage;
+          formBodyArray.forEach(item => {
+            if (item.tagName.toLowerCase() !== 'button') {
+              item.value = '';
+            }
+          });
+        })
+        .catch(error => {
+          console.error(error);
+          statusMessage.textContent = errorMessage;
         });
-      }, error => {
-        console.error(error);
-        statusMessage.textContent = errorMessage;
-      });
     });
   };
 
