@@ -42,7 +42,7 @@ function countTimer(deadline) {
     }
 
   }
-
+  updateClock();
   const idInterval = setInterval(updateClock, 1000);
 
 }
