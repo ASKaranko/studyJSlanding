@@ -1,7 +1,5 @@
 function countTimer(deadline) {
-  const timerHours = document.getElementById('timer-hours'),
-    timerMinutes = document.getElementById('timer-minutes'),
-    timerSeconds = document.getElementById('timer-seconds');
+  const timerDiv = document.getElementById('timer');
 
   function getTimeRemaining() {
     const dateStop = new Date(deadline).getTime(),
@@ -24,16 +22,25 @@ function countTimer(deadline) {
   function updateClock() {
     const timer = getTimeRemaining();
 
-    timerHours.textContent = addNull(timer.hours);
-    timerMinutes.textContent = addNull(timer.minutes);
-    timerSeconds.textContent = addNull(timer.seconds);
-
     if (timer.timeRemaining <= 0) {
       clearInterval(idInterval);
-      timerHours.textContent = '00';
-      timerMinutes.textContent = '00';
-      timerSeconds.textContent = '00';
+      timerDiv.innerHTML = `
+      <span id="timer-hours">${'00'}</span>
+      <span>:</span>
+      <span id="timer-minutes">${'00'}</span>
+      <span>:</span>
+      <span id="timer-seconds">${'00'}</span>
+    `;
+    } else {
+      timerDiv.innerHTML = `
+    <span id="timer-hours">${addNull(timer.hours)}</span>
+    <span>:</span>
+    <span id="timer-minutes">${addNull(timer.minutes)}</span>
+    <span>:</span>
+    <span id="timer-seconds">${addNull(timer.seconds)}</span>
+    `;
     }
+
   }
 
   const idInterval = setInterval(updateClock, 1000);

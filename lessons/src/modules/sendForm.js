@@ -30,22 +30,31 @@ const sendForm = form => {
       item.addEventListener('input', () => {
         item.value = item.value.replace(/[^0-9+]/g, '');
       });
-    } else if (/name$/.test(item.id) || /message$/.test(item.id)) {
+    } else if (/name$/.test(item.id)) {
       item.addEventListener('input', () => {
         item.value = item.value.replace(/[^а-я]/gi, '');
+      });
+    } else if (/message$/.test(item.id)) {
+      item.addEventListener('input', () => {
+        item.value = item.value.replace(/[^а-я \W]/gi, '');
       });
     }
   });
 
   form.addEventListener('submit', event => {
     event.preventDefault();
-    form.append(statusMessage);
-    form.append(circleMessage);
+    form.appendChild(statusMessage);
+    form.appendChild(circleMessage);
     const formData = new FormData(form);
     const body = {};
     formData.forEach((item, i) => {
       body[i] = item;
     });
+
+    function clearMessage () {
+      statusMessage.remove();
+      console.log('Готово');
+    }
 
     postData(body)
       .then(response => {
@@ -54,6 +63,7 @@ const sendForm = form => {
         }
         circleMessage.remove();
         statusMessage.textContent = successMessage;
+        setTimeout(clearMessage, 3000);
         formBodyArray.forEach(item => {
           if (item.tagName.toLowerCase() !== 'button') {
             item.value = '';

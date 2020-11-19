@@ -12,7 +12,7 @@ const slider = () => {
       } else {
         li.classList.add('dot');
       }
-      portfolioDots.append(li);
+      portfolioDots.appendChild(li);
     });
   };
 

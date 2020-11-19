@@ -21,7 +21,7 @@ import sendForm from './modules/sendForm';
 import { form, form2, form3 } from './modules/sendForm';
 
 //Timer
-countTimer('12 november 2020');
+countTimer('25 november 2020');
 
 //Меню
 toggleMenu();
