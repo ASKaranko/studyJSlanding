@@ -15,6 +15,7 @@ import toggleMenu from './modules/toggleMenu';
 import togglePopUp from './modules/togglePopUp';
 import tabs from './modules/tabs';
 import slider from './modules/slider';
+import SliderСarousel from './modules/sliderOop';
 import ourTeam from './modules/ourTeam';
 import calc from './modules/calc';
 import sendForm from './modules/sendForm';
@@ -34,6 +35,30 @@ tabs();
 
 //Слайдер
 slider();
+
+//Слайдер для компаний
+const carousel = new SliderСarousel({
+  main: '.companies-wrapper',
+  wrap: '.companies-hor',
+  prev: '#test-left',
+  next: '#test-right',
+  infinity: true,
+  slidesToShow: 4,
+  responsive: [{
+    breakpoint: 1024,
+    slidesToShow: 3,
+  },
+  {
+    breakpoint: 768,
+    slidesToShow: 2,
+  },
+  {
+    breakpoint: 576,
+    slidesToShow: 1,
+  },
+]
+});
+carousel.init();
 
 //ourTeam
 ourTeam();
